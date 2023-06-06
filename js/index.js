@@ -3,6 +3,8 @@ const linkForm = document.getElementById("link-form");
 const errMsg = document.getElementById("err-msg");
 const btn = document.getElementById("menu-btn");
 const menu = document.getElementById("menu");
+const shortenContainer = document.getElementById("shortener");
+
 linkForm.addEventListener("submit", formSubmit);
 btn.addEventListener("click", navToggle);
 
@@ -30,6 +32,7 @@ function formSubmit(e) {
     errMsg.textContent = "";
     input.classList.remove("bordernew");
   }
+  shortenData();
 }
 //toggle mobile menu
 function navToggle() {
@@ -37,3 +40,56 @@ function navToggle() {
   menu.classList.toggle("flex");
   menu.classList.toggle("hidden");
 }
+
+const getshortenLink = function (data) {
+  const html = `<div
+          class="flex flex-col items-center justify-between w-full p-6 bg-white rounded-lg md:flex-row"
+        >
+          <p class="font-bold text-center text-veryDarkViolet md:text-left">
+          ${data.result.original_link}
+          </p>
+          <div
+            class="flex flex-col items-center justify-end flex-1 space-x-4 space-y-2 md:flex-row md:space-y-0"
+          >
+            <div id="newlink" class="font-bold text-cyan"> ${data.result.full_short_link2}</div>
+            <button id="btncopy"
+              class="p-2 px-8 text-white bg-cyan rounded-lg hover:opacity-70 focus:outline-none"
+            >
+              Copy
+            </button>
+          </div>
+        </div>`;
+  shortenContainer.insertAdjacentHTML("beforeend", html);
+  const btnCopy = document.querySelectorAll("#btncopy");
+  btnCopy.forEach(function (el) {
+    el.addEventListener("click", function () {
+      // Get the text field
+      const newLink = document.querySelectorAll("#newlink");
+
+      newLink.forEach(function (ey) {
+        // Copy the text inside the text field
+        const copyText = ey.innerHTML;
+        navigator.clipboard.writeText(copyText);
+      });
+      //changes on the button
+      el.textContent = "Copied";
+      el.style.backgroundColor = "hsl(260, 8%, 14%)";
+    });
+  });
+};
+
+// const clickbtn = function(){
+//   shortenData();
+// }
+
+//adding api
+const shortenData = async function () {
+  const res = await fetch(` https://api.shrtco.de/v2/shorten?url=${input.value}
+`);
+  const data = await res.json();
+  console.log(data);
+  getshortenLink(data);
+};
+
+// shortenData();
+function textCopy() {}
