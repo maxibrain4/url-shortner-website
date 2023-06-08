@@ -59,16 +59,17 @@ const getshortenLink = function (data) {
             </button>
           </div>
         </div>`;
+
   shortenContainer.insertAdjacentHTML("beforeend", html);
   const btnCopy = document.querySelectorAll("#btncopy");
+  const newLink = document.querySelectorAll("#newlink");
   btnCopy.forEach(function (el) {
     el.addEventListener("click", function () {
       // Get the text field
-      const newLink = document.querySelectorAll("#newlink");
-
-      newLink.forEach(function (ey) {
-        // Copy the text inside the text field
-        const copyText = ey.innerHTML;
+      newLink.forEach(function () {
+        //set local storage
+        localStorage.setItem("shortenedLink", data.result.full_short_link2);
+        const copyText = localStorage.getItem("shortenedLink");
         navigator.clipboard.writeText(copyText);
       });
       //changes on the button
@@ -84,12 +85,16 @@ const getshortenLink = function (data) {
 
 //adding api
 const shortenData = async function () {
-  const res = await fetch(` https://api.shrtco.de/v2/shorten?url=${input.value}
+  try {
+    const res =
+      await fetch(` https://api.shrtco.de/v2/shorten?url=${input.value}
 `);
-  const data = await res.json();
-  console.log(data);
-  getshortenLink(data);
+    const data = await res.json();
+    console.log(data);
+    getshortenLink(data);
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 // shortenData();
-function textCopy() {}
